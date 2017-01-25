@@ -8,8 +8,8 @@ namespace RandomProfanityGenerator
     public class ProfanityGenerator
     {
         private readonly Random _random = new Random();
-        private List<string> Profanities { get; }
-        private List<string> Starters { get; }
+        public List<string> Profanities { get; set; }
+        public List<string> Starters { get; set; }
         public ProfanityGenerator()
         {
             Profanities = XDocument.Load("swearWords.xml")

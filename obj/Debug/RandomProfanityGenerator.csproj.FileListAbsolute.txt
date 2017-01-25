@@ -6,3 +6,6 @@ c:\users\jtucker\documents\visual studio 2015\Projects\RandomProfanityGenerator\
 c:\users\jtucker\documents\visual studio 2015\Projects\RandomProfanityGenerator\RandomProfanityGenerator\obj\Debug\RandomProfanityGenerator.pdb
 c:\users\jtucker\documents\visual studio 2015\Projects\RandomProfanityGenerator\RandomProfanityGenerator\bin\Debug\sentenceStructures.xml
 c:\users\jtucker\documents\visual studio 2015\Projects\RandomProfanityGenerator\RandomProfanityGenerator\bin\Debug\swearWords.xml
+C:\Users\jtucker\Documents\GitHub\RandomProfanityGenerator\bin\Debug\RandomProfanityGenerator.exe.config
+C:\Users\jtucker\Documents\GitHub\RandomProfanityGenerator\obj\Debug\RandomProfanityGenerator.exe
+C:\Users\jtucker\Documents\GitHub\RandomProfanityGenerator\obj\Debug\RandomProfanityGenerator.pdb
