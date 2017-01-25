@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Linq;
 
 namespace RandomProfanityGenerator
@@ -12,32 +9,58 @@ namespace RandomProfanityGenerator
     {
         static void Main(string[] args)
         {
-            Random rnd = new Random();
+            var profanityGenerator = new ProfanityGenerator();
 
-            XDocument profanityXml = XDocument.Load(@"C:\Users\Katelyn\Documents\RandomProfanityGenerator\swearWords.xml");
-            XDocument sentenceXml = XDocument.Load(@"C:\Users\Katelyn\Documents\RandomProfanityGenerator\sentenceStructures.xml");
+            while (true)
+            {
+                for (var c = 0; c < 10; c++)
+                    Console.WriteLine(profanityGenerator.BuildSentence());
 
-            var firstPartSentence = (from g in sentenceXml.Descendants("sentence")
-                                     select g.Descendants("first").OrderBy(r => rnd.Next()).First()).First().Value;
+                Console.WriteLine($"Your mom is a {profanityGenerator.GetRandomProfanity()} {profanityGenerator.GetRandomProfanity()}");
+                Console.ReadLine();
+            }
+        }   
+    }
 
-            var secondPartSentence = (from g in sentenceXml.Descendants("sentence")
-                                     select g.Descendants("second").OrderBy(r => rnd.Next()).First()).First().Value;
+    public class ProfanityGenerator
+    {
+        private readonly Random _random = new Random();
+        private List<string> Profanities { get; }
+        private List<string> Starters { get; }
+        public ProfanityGenerator()
+        {
+            Profanities = XDocument.Load("swearWords.xml")
+                .Descendants("word")
+                .Select(word => word.Value)
+                .ToList();
 
-            var thirdPartSentence = (from g in sentenceXml.Descendants("sentence")
-                                     select g.Descendants("third").OrderBy(r => rnd.Next()).First()).First().Value;
+            var sentences = XDocument.Load("sentenceStructures.xml")
+                .Descendants("sentence").ToList();
 
-            var randomProfanityFirst = (from g in profanityXml.Descendants("words")
-                                        select g.Descendants("word").OrderBy(r => rnd.Next()).First()).First().Value;
+            Starters = sentences
+                .SelectMany(sentence => sentences.Descendants("first"))
+                .Select(f => f.Value).ToList();
+        }
 
-            var randomProfanityMiddle = (from g in profanityXml.Descendants("words")
-                                         select g.Descendants("word").OrderBy(r => rnd.Next()).First()).First().Value;
+        public string GetRandomOpener()
+        {
+            return Starters[_random.Next(Starters.Count)];
+        }
 
-            var randomProfanityLast = (from g in profanityXml.Descendants("words")
-                                       select g.Descendants("word").OrderBy(r => rnd.Next()).First()).First().Value;
+        public string GetRandomProfanity()
+        {
+            return Profanities[_random.Next(Profanities.Count)];
+        }
 
-            Console.WriteLine(firstPartSentence + " " + randomProfanityFirst + " " + randomProfanityMiddle + " " + randomProfanityLast);
-            Console.ReadLine();
+        public string BuildSentence()
+        {
+            var profanity = new List<string> {GetRandomOpener()};
 
+            var numberOfWords = _random.Next(3, 8);
+            for (var i = 0; i < numberOfWords; i++)
+                profanity.Add(GetRandomProfanity());
+
+            return string.Join(" ", profanity);
         }
     }
 }
