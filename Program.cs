@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace RandomProfanityGenerator
 {
@@ -11,9 +12,8 @@ namespace RandomProfanityGenerator
             while (true)
             {
                 for (var c = 0; c < 10; c++)
-                    Console.WriteLine(profanityGenerator.BuildSentence());
+                    Console.WriteLine(profanityGenerator.BuildSentence().ToString());
 
-                Console.WriteLine($"Your mom is a {profanityGenerator.GetRandomProfanity()} {profanityGenerator.GetRandomProfanity()}");
                 Console.ReadLine();
             }
         }   
