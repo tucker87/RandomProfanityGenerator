@@ -1,49 +1,49 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Xml.Linq;
+using Newtonsoft.Json;
 
 namespace RandomProfanityGenerator
 {
     public class ProfanityGenerator
     {
         private readonly Random _random = new Random();
-        public List<string> Profanities { get; set; }
-        public List<string> Starters { get; set; }
+        public List<Word> Words { get; set; }
+        private Dictionary<Type, Func<List<Word>>> WordTypes { get; set; }
+        public List<SentencePattern> Patterns { get; set; }
         public ProfanityGenerator()
         {
-            Profanities = XDocument.Load("swearWords.xml")
-                .Descendants("word")
-                .Select(word => word.Value)
-                .ToList();
+            Words = JsonConvert.DeserializeObject<List<Word>>(File.ReadAllText("swearWords.json"), new WordConverter());
+            
+            WordTypes = new Dictionary<Type, Func<List<Word>>>
+            {
+                { typeof(Noun), () => Words.OfType<Noun>().Select(n => (Word)n).ToList()},
+                { typeof(Subject), () => Words.OfType<Subject>().Select(n => (Word)n).ToList()},
+                { typeof(Verb), () => Words.OfType<Verb>().Select(n => (Word)n).ToList()}
+            };
 
-            var sentences = XDocument.Load("sentenceStructures.xml")
-                .Descendants("sentence").ToList();
-
-            Starters = sentences
-                .SelectMany(sentence => sentences.Descendants("first"))
-                .Select(f => f.Value).ToList();
+            Patterns = new List<SentencePattern>
+            {
+                new SentencePattern(typeof(Subject), typeof(Verb), typeof(Noun))
+            };
+        }
+        
+        public Word GetRandom(Type wordType)
+        {
+            return WordTypes[wordType]().Random(_random);
         }
 
-        public string GetRandomOpener()
+        public T GetRandom<T>() where T : Word
         {
-            return Starters[_random.Next(Starters.Count)];
+            return (T) WordTypes[typeof(T)]().Random(_random);
         }
 
-        public string GetRandomProfanity()
+        public Sentence BuildSentence()
         {
-            return Profanities[_random.Next(Profanities.Count)];
-        }
-
-        public string BuildSentence()
-        {
-            var profanity = new List<string> {GetRandomOpener()};
-
-            var numberOfWords = _random.Next(3, 8);
-            for (var i = 0; i < numberOfWords; i++)
-                profanity.Add(GetRandomProfanity());
-
-            return string.Join(" ", profanity);
+            var pattern = Patterns.Random(_random);
+            return new Sentence(pattern.WordTypes.Select(GetRandom).ToList());
+            
         }
     }
 }
