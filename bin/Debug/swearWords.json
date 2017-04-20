@@ -68,5 +68,7 @@
   { "base": "whore", "type": "noun"},
   { "base": "wtf", "type": "noun"},
   { "base": "you", "type": "subject"},
-  { "base": "your mom", "type": "subject", "possessive":  true}
+  { "base": "your", "type": "subject", "possessive":  true},
+  { "base": "mom", "type": "person"},
+  { "base": "mom", "type": "person"}
 ]

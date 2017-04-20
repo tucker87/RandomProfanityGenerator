@@ -73,4 +73,9 @@ namespace RandomProfanityGenerator
     public class Subject : Word
     {
     }
+
+    [WordType(WordType.Person)]
+    public class Person : Word
+    {
+    }
 }

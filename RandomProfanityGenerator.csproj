@@ -56,6 +56,7 @@
     <Compile Include="Word.cs" />
     <Compile Include="WordConverter.cs" />
     <Compile Include="WordFactory.cs" />
+    <Compile Include="WordFilter.cs" />
     <Compile Include="WordType.cs" />
     <Compile Include="WordTypeAttribute.cs" />
   </ItemGroup>
