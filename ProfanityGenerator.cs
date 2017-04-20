@@ -10,39 +10,45 @@ namespace RandomProfanityGenerator
     {
         private readonly Random _random = new Random();
         public List<Word> Words { get; set; }
-        private Dictionary<Type, Func<List<Word>>> WordTypes { get; set; }
+        //private Dictionary<WordFilter, Func<List<Word>>> WordTypes { get; set; }
         public List<SentencePattern> Patterns { get; set; }
         public ProfanityGenerator()
         {
             Words = JsonConvert.DeserializeObject<List<Word>>(File.ReadAllText("swearWords.json"), new WordConverter());
             
-            WordTypes = new Dictionary<Type, Func<List<Word>>>
-            {
-                { typeof(Noun), () => Words.OfType<Noun>().Select(n => (Word)n).ToList()},
-                { typeof(Subject), () => Words.OfType<Subject>().Select(n => (Word)n).ToList()},
-                { typeof(Verb), () => Words.OfType<Verb>().Select(n => (Word)n).ToList()}
-            };
-
             Patterns = new List<SentencePattern>
             {
-                new SentencePattern(typeof(Subject), typeof(Verb), typeof(Noun))
+                new SentencePattern(
+                    WordFilter.CreateFilter<Subject>(s => !s.Possessive), 
+                    WordFilter.CreateFilter<Verb>(), 
+                    WordFilter.CreateFilter<Noun>()),
+
+                new SentencePattern(
+                    WordFilter.CreateFilter<Subject>(s => s.Possessive), 
+                    WordFilter.CreateFilter<Person>(), 
+                    WordFilter.CreateFilter<Verb>(), 
+                    WordFilter.CreateFilter<Noun>())
             };
         }
         
-        public Word GetRandom(Type wordType)
+        public Word GetRandom(WordFilter wordFilter)
         {
-            return WordTypes[wordType]().Random(_random);
+            return Words
+                .Where(w => w.GetType() == wordFilter.WordType)
+                .Where(w => wordFilter.Filters.All(f => f(w)))
+                .ToList()
+                .Random(_random);
         }
 
-        public T GetRandom<T>() where T : Word
-        {
-            return (T) WordTypes[typeof(T)]().Random(_random);
-        }
+        //public T GetRandom<T>() where T : Word
+        //{
+        //    return (T) WordTypes[new WordFilter<T>()]().Random(_random);
+        //}
 
         public Sentence BuildSentence()
         {
             var pattern = Patterns.Random(_random);
-            return new Sentence(pattern.WordTypes.Select(GetRandom).ToList());
+            return new Sentence(pattern.WordFilters.Select(GetRandom).ToList());
             
         }
     }

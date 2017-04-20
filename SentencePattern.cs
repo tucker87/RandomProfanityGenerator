@@ -4,10 +4,10 @@ namespace RandomProfanityGenerator
 {
     public class SentencePattern
     {
-        public Type[] WordTypes { get; set; }
-        public SentencePattern(params Type[] wordTypes)
+        public WordFilter[] WordFilters { get; set; }
+        public SentencePattern (params WordFilter[] wordFilters)
         {
-            WordTypes = wordTypes;
+            WordFilters = wordFilters;
         }
     }
 }

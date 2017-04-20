@@ -7,6 +7,7 @@ namespace RandomProfanityGenerator
         Adjective,
         Adverb,
         Participle,
-        Subject
+        Subject,
+        Person
     }
 }
